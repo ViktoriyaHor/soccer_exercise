@@ -1,4 +1,5 @@
 require './converts_info.rb'
+
 class ReadFile
 
   def valid_info?
@@ -10,21 +11,29 @@ class ReadFile
     end
   end
 
-  def read_info
+  def output_results
     @fh = open ARGV[0]
-    @info = ''
+    @result = []
     return false unless valid_info?
     @fh.each do |line|
-      @info += line
+      @info = line
+      @convert = ConvertsInfo.new(@info)
+      @result += @convert.result
     end
     @fh.close
-    @convert = ConvertsInfo.new(@info)
-    @convert.to_array
+    p new = @result.each_slice(2).to_a.map { |elem| Hash[*elem] }
+    p result_p = new.inject{|memo, el| memo.merge( el ){|k, old_v, new_v| old_v + new_v}}.sort.sort {|a,b| b[1] <=> a[1] }
+    result_p.each {|key, value, i| puts "#{i} #{key} #{value} pt" }
   end
+
+  # def compare(array)
+  #   p @array
+  #
+  # end
 end
 
 info = ReadFile.new
-info.read_info
+info.output_results
 
 
 

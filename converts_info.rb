@@ -6,7 +6,7 @@ class ConvertsInfo
   end
 
   def to_array
-    p arr = self.info.gsub("\n", ', ').split(', ')
+    arr = self.info.strip.split(', ')
     arr.map! do |elem|
       ar = elem.split(' ')
       if ar.length > 2
@@ -16,17 +16,29 @@ class ConvertsInfo
       else
         ar
       end
+
     end
-    p arr
-    # p Hash[arr.each_slice(2).to_a]
     # p arr
+    Hash[*arr.flatten]
+    # list.keys
+  end
+  #
+  def result
+    list = to_array
+    ar = list.sort_by {|key, value| value}.flatten
+    ar.each_with_index{|v,i| if i[0].zero? then v.to_i end}
+    if ar[1] == ar[3]
+      ar[1] = 1 && ar[3] = 1
+    else
+      ar[1] = 0
+      ar[3] = 3
+    end
+    p ar
+  end
+  def command
+
 
 
   end
-
-  # def to_hash(arr)
-  #
-  #
-  # end
 end
 
