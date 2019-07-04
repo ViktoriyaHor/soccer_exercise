@@ -1,39 +1,45 @@
+# frozen_string_literal: true
+
 require './converts_info.rb'
 
+# read information
 class ReadFile
-
   def valid_info?
     if ARGV.length == 1
       true
     else
-      puts "We need exactly one parameter. The name of a file."
+      puts 'We need exactly one parameter. The name of a file.'
       exit
     end
   end
 
-  def output_results
-    @fh = open ARGV[0]
+  def arr_with_pt
+    @fh = File.open(ARGV[0])
     @result = []
     return false unless valid_info?
+
     @fh.each do |line|
       @info = line
       @convert = ConvertsInfo.new(@info)
       @result += @convert.result
     end
     @fh.close
-    p new = @result.each_slice(2).to_a.map { |elem| Hash[*elem] }
-    p result_p = new.inject{|memo, el| memo.merge( el ){|k, old_v, new_v| old_v + new_v}}.sort.sort {|a,b| b[1] <=> a[1] }
-    result_p.each {|key, value, i| puts "#{i} #{key} #{value} pt" }
   end
 
-  # def compare(array)
-  #   p @array
-  #
-  # end
+  def sort
+    arr_with_pt
+    new = @result.each_slice(2).to_a.map { |elem| Hash[*elem] }
+    @result = new.inject { |m, el| m.merge(el) { |_k, o_v, n_v| o_v + n_v } }
+    @result_by_str = @result.sort
+    @result_by_pt = @result.sort { |a, b| b[1] <=> a[1] }
+  end
+
+  def print_result
+    sort
+    @add_index = @result_by_pt.each_with_index { |val, index| val << index + 1 }
+    @add_index.each { |key, value, i| puts "#{i} #{key} #{value} pt" }
+  end
 end
 
 info = ReadFile.new
-info.output_results
-
-
-
+info.print_result

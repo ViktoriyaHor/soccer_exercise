@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Converts info to hash
 class ConvertsInfo
   attr_accessor :info
 
@@ -6,39 +9,33 @@ class ConvertsInfo
   end
 
   def to_array
-    arr = self.info.strip.split(', ')
+    arr = info.split(', ')
+    name_command(arr)
+    Hash[*arr.flatten]
+  end
+
+  def name_command(arr)
     arr.map! do |elem|
       ar = elem.split(' ')
       if ar.length > 2
         num = ar.last
-        a = ar[0...-1].join(' ')
-        [a, num]
+        [ar[0...-1].join(' '), num]
       else
         ar
       end
-
     end
-    # p arr
-    Hash[*arr.flatten]
-    # list.keys
   end
-  #
+
   def result
-    list = to_array
-    ar = list.sort_by {|key, value| value}.flatten
-    ar.each_with_index{|v,i| if i[0].zero? then v.to_i end}
+    ar = to_array.sort_by { |_key, value| value }.flatten
+    ar.each_with_index { |v, i| v.to_i if i[0].zero? }
     if ar[1] == ar[3]
-      ar[1] = 1 && ar[3] = 1
+      ar[1] = 1
+      ar[3] = 1
     else
       ar[1] = 0
       ar[3] = 3
     end
-    p ar
-  end
-  def command
-
-
-
+    ar
   end
 end
-
